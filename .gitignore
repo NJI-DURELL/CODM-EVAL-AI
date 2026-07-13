@@ -1,0 +1,26 @@
+# Node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Env
+.env
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
