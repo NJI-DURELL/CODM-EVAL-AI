@@ -31,5 +31,7 @@ class ClanRepository:
         return [Clan(**row) for row in result.data]
 
     def get(self, clan_id: UUID) -> Clan | None:
+        # maybe_single() returns None outright (not a response with .data=None)
+        # when zero rows match.
         result = self.db.table(TABLE).select("*").eq("id", str(clan_id)).maybe_single().execute()
-        return Clan(**result.data) if result.data else None
+        return Clan(**result.data) if result and result.data else None

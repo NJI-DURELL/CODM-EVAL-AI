@@ -36,6 +36,10 @@ class TournamentRepository:
         return [Tournament(**row) for row in result.data]
 
     def get(self, organizer_id: str, tournament_id: UUID) -> Tournament | None:
+        # maybe_single() returns None outright (not a response with
+        # .data=None) when zero rows match — e.g. a tournament that doesn't
+        # exist or isn't owned by this organizer, which is the common case
+        # every route's ownership check hits.
         result = (
             self.db.table(TABLE)
             .select("*")
@@ -44,4 +48,4 @@ class TournamentRepository:
             .maybe_single()
             .execute()
         )
-        return Tournament(**result.data) if result.data else None
+        return Tournament(**result.data) if result and result.data else None

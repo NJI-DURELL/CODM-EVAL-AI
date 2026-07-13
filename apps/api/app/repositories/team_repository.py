@@ -39,8 +39,10 @@ class TeamRepository:
         return [Team(**row) for row in result.data]
 
     def get(self, team_id: UUID) -> Team | None:
+        # maybe_single() returns None outright (not a response with
+        # .data=None) when zero rows match.
         result = self.db.table(TABLE).select("*").eq("id", str(team_id)).maybe_single().execute()
-        return Team(**result.data) if result.data else None
+        return Team(**result.data) if result and result.data else None
 
     def get_with_clan(self, team_id: UUID) -> dict | None:
         result = (
@@ -50,4 +52,4 @@ class TeamRepository:
             .maybe_single()
             .execute()
         )
-        return result.data
+        return result.data if result else None

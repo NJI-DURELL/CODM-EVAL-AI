@@ -20,7 +20,9 @@ class MatchRepository:
             .maybe_single()
             .execute()
         )
-        if existing.data:
+        # maybe_single() returns None outright (not a response with
+        # .data=None) when zero rows match.
+        if existing and existing.data:
             return Match(**existing.data)
         row = {"tournament_id": str(tournament_id), "match_number": payload.match_number}
         result = self.db.table(TABLE).insert(row).execute()
@@ -28,7 +30,7 @@ class MatchRepository:
 
     def get(self, match_id: UUID) -> Match | None:
         result = self.db.table(TABLE).select("*").eq("id", str(match_id)).maybe_single().execute()
-        return Match(**result.data) if result.data else None
+        return Match(**result.data) if result and result.data else None
 
     def list_for_tournament(self, tournament_id: UUID) -> list[Match]:
         result = (

@@ -1,3 +1,12 @@
+import os
+
+# WeasyPrint needs GTK/Pango/Cairo at import time. The Docker image installs
+# these via apt; on native Windows dev, Python 3.8+'s DLL search no longer
+# honors PATH for a library's own dependencies, so a GTK3 runtime install
+# needs to be registered explicitly. This is a no-op everywhere else.
+if os.name == "nt" and (_gtk_bin := os.environ.get("GTK3_RUNTIME_BIN")):
+    os.add_dll_directory(_gtk_bin)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

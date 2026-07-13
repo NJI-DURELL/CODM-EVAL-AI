@@ -35,6 +35,8 @@ class ScreenshotRepository:
         return result.data
 
     def find_duplicate(self, match_id: UUID, content_hash: str) -> dict | None:
+        # maybe_single() returns None outright (not a response with
+        # .data=None) when zero rows match.
         result = (
             self.db.table(SCREENSHOTS)
             .select("id")
@@ -43,7 +45,7 @@ class ScreenshotRepository:
             .maybe_single()
             .execute()
         )
-        return result.data
+        return result.data if result else None
 
     def update_status(
         self,
@@ -67,7 +69,7 @@ class ScreenshotRepository:
             .maybe_single()
             .execute()
         )
-        return result.data
+        return result.data if result else None
 
     def confirm_match_result(
         self,
