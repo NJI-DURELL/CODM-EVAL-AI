@@ -52,8 +52,8 @@ export default function LeaderboardPage({ params }: { params: Promise<{ tourname
       {!awardsLoading && awards && (awards.mvp || awards.best_team || awards.most_kills_team) && (
         <div className="grid gap-4 sm:grid-cols-3">
           <AwardCard icon={CrownIcon} label="MVP" value={awards.mvp?.player_name} detail={awards.mvp ? `${awards.mvp.total_kills} kills · ${awards.mvp.team_name}` : undefined} />
-          <AwardCard icon={ShieldIcon} label="Best team" value={awards.best_team?.team_name} detail={awards.best_team ? `${awards.best_team.total_points.toFixed(1)} pts · ${awards.best_team.clan_name}` : undefined} />
-          <AwardCard icon={SkullIcon} label="Most kills (team)" value={awards.most_kills_team?.team_name} detail={awards.most_kills_team ? `${awards.most_kills_team.total_kills} kills · ${awards.most_kills_team.clan_name}` : undefined} />
+          <AwardCard icon={ShieldIcon} label="Best team" value={awards.best_team?.team_name} detail={awards.best_team ? `${awards.best_team.total_points.toFixed(1)} pts` : undefined} />
+          <AwardCard icon={SkullIcon} label="Most kills (team)" value={awards.most_kills_team?.team_name} detail={awards.most_kills_team ? `${awards.most_kills_team.total_kills} kills` : undefined} />
         </div>
       )}
 
@@ -77,7 +77,11 @@ export default function LeaderboardPage({ params }: { params: Promise<{ tourname
                   unit="pts"
                   data={(teams ?? [])
                     .slice(0, 10)
-                    .map((t) => ({ name: t.team_name, value: t.total_points, sublabel: t.clan_name }))}
+                    .map((t) => ({
+                      name: t.team_name,
+                      value: t.total_points,
+                      sublabel: `${t.games_played} games`,
+                    }))}
                 />
               )}
             </CardContent>
@@ -93,7 +97,6 @@ export default function LeaderboardPage({ params }: { params: Promise<{ tourname
                     <TableRow>
                       <TableHead className="w-10">#</TableHead>
                       <TableHead>Team</TableHead>
-                      <TableHead>Clan</TableHead>
                       <TableHead className="text-right">Games</TableHead>
                       <TableHead className="text-right">Kills</TableHead>
                       <TableHead className="text-right">Points</TableHead>
@@ -104,7 +107,6 @@ export default function LeaderboardPage({ params }: { params: Promise<{ tourname
                       <TableRow key={row.team_id}>
                         <TableCell className="tabular-nums text-muted-foreground">{i + 1}</TableCell>
                         <TableCell className="font-medium">{row.team_name}</TableCell>
-                        <TableCell className="text-muted-foreground">{row.clan_name}</TableCell>
                         <TableCell className="text-right tabular-nums">{row.games_played}</TableCell>
                         <TableCell className="text-right tabular-nums">{row.total_kills}</TableCell>
                         <TableCell className="text-right font-medium tabular-nums">

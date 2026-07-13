@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const TABS = [
   { href: "", label: "Overview" },
-  { href: "/clans", label: "Clans" },
+  { href: "/teams", label: "Teams" },
   { href: "/matches", label: "Matches" },
   { href: "/leaderboard", label: "Leaderboard" },
 ];

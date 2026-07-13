@@ -2,10 +2,10 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { ShieldIcon, SwordsIcon, UsersIcon, GamepadIcon, ArrowRightIcon } from "lucide-react";
+import { SwordsIcon, ImageUpIcon, GamepadIcon, ArrowRightIcon } from "lucide-react";
 
 import { useTournament } from "@/lib/queries/tournaments";
-import { useTournamentRoster } from "@/lib/queries/roster";
+import { useTeams } from "@/lib/queries/teams";
 import { useMatches } from "@/lib/queries/matches";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,21 +18,19 @@ export default function TournamentOverviewPage({
 }) {
   const { tournamentId } = use(params);
   const { data: tournament } = useTournament(tournamentId);
-  const { data: clans, isLoading: rosterLoading } = useTournamentRoster(tournamentId);
+  const { data: teams, isLoading: teamsLoading } = useTeams(tournamentId);
   const { data: matches, isLoading: matchesLoading } = useMatches(tournamentId);
 
-  const teamCount = clans.reduce((sum, c) => sum + c.teams.length, 0);
-  const isLoading = rosterLoading || matchesLoading;
+  const isLoading = teamsLoading || matchesLoading;
 
   const stats = [
-    { icon: ShieldIcon, label: "Clans", value: clans.length },
-    { icon: SwordsIcon, label: "Teams", value: teamCount },
+    { icon: SwordsIcon, label: "Teams discovered", value: teams?.length ?? 0 },
     { icon: GamepadIcon, label: "Matches", value: matches?.length ?? 0 },
   ];
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         {stats.map(({ icon: Icon, label, value }) => (
           <Card key={label}>
             <CardContent className="flex items-center gap-3 pt-1">
@@ -54,16 +52,16 @@ export default function TournamentOverviewPage({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <QuickLink
-          href={`/tournaments/${tournamentId}/clans`}
-          icon={UsersIcon}
-          title="Manage clans & rosters"
-          description="Register clans, teams, and players."
+          href={`/tournaments/${tournamentId}/matches`}
+          icon={ImageUpIcon}
+          title="Upload a screenshot"
+          description="Players and teams are pulled from the scoreboard automatically."
         />
         <QuickLink
-          href={`/tournaments/${tournamentId}/matches`}
-          icon={GamepadIcon}
-          title="Run matches"
-          description="Upload scoreboards and confirm results."
+          href={`/tournaments/${tournamentId}/teams`}
+          icon={SwordsIcon}
+          title="Review teams & players"
+          description="See what's been discovered so far and rename anything OCR got wrong."
         />
       </div>
 

@@ -30,11 +30,11 @@ export function useMatchScreenshots(tournamentId: string, matchId: string) {
 export function useUploadScreenshot(tournamentId: string, matchId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ teamId, file }: { teamId: string; file: File }) => {
+    mutationFn: (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
       return apiFetch<ScreenshotUploadResult>(
-        `/tournaments/${tournamentId}/matches/${matchId}/teams/${teamId}/screenshots`,
+        `/tournaments/${tournamentId}/matches/${matchId}/screenshots`,
         { method: "POST", formData }
       );
     },

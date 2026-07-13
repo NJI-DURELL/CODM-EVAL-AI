@@ -59,7 +59,7 @@ function LoginForm() {
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl">Sign in</CardTitle>
-        <CardDescription>Run your tournaments — clans, matches, and live standings.</CardDescription>
+        <CardDescription>Upload match screenshots, get live standings.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

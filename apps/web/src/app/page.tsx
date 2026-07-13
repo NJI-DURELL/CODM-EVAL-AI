@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 
 const FEATURES = [
   {
-    icon: ListOrdered,
-    title: "Rosters that scale",
+    icon: ScanLine,
+    title: "No registration, no roster forms",
     description:
-      "Clans, up to five teams each, full player rosters. Set it up once, run every match through it.",
+      "Just upload the post-match scoreboard. OCR reads the players, kills, and placement — no signup step to set up first.",
   },
   {
-    icon: ScanLine,
-    title: "Screenshots in, standings out",
+    icon: ListOrdered,
+    title: "Teams build themselves",
     description:
-      "Upload the post-match scoreboard. OCR reads placement and kills, flags anything it isn't sure about for your review.",
+      "The system recognizes returning players and groups them into teams automatically. Rename or merge anything it gets wrong.",
   },
   {
     icon: Trophy,
@@ -40,11 +40,11 @@ export default function LandingPage() {
 
       <main className="flex flex-1 flex-col items-center px-6 pt-16 pb-24 text-center sm:pt-24">
         <h1 className="font-heading max-w-3xl text-4xl font-bold tracking-wide text-balance sm:text-6xl">
-          Run your CODM clan tournament like it&apos;s the grand finals.
+          Run your CODM tournament straight from the scoreboard.
         </h1>
         <p className="mt-6 max-w-xl text-lg text-muted-foreground text-balance">
-          Rosters, matches, OCR&apos;d scoreboards, and live standings — one tool from bracket to
-          trophy.
+          Upload the screenshot. The system reads the players, teams, and results — no roster to
+          register first.
         </p>
         <div className="mt-10 flex items-center gap-3">
           <Button render={<Link href="/signup" />} size="lg">

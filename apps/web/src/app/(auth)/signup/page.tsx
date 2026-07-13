@@ -85,7 +85,7 @@ export default function SignupPage() {
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl">Create your account</CardTitle>
-        <CardDescription>Set up rosters, run matches, and track live standings.</CardDescription>
+        <CardDescription>Upload match screenshots, get live standings.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

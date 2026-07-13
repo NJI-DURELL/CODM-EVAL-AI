@@ -41,7 +41,7 @@ export default function DashboardPage() {
             </EmptyMedia>
             <EmptyTitle>No tournaments yet</EmptyTitle>
             <EmptyDescription>
-              Create your first tournament to register clans and start tracking matches.
+              Create your first tournament, then upload a match screenshot to get started.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>

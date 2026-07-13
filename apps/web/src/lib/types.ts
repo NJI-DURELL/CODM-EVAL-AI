@@ -20,21 +20,9 @@ export interface TournamentCreate {
   kill_point_value?: number | null;
 }
 
-export interface Clan {
-  id: string;
-  tournament_id: string;
-  name: string;
-  logo_url: string | null;
-}
-
-export interface ClanCreate {
-  name: string;
-  logo_url?: string | null;
-}
-
 export interface Team {
   id: string;
-  clan_id: string;
+  tournament_id: string;
   name: string;
 }
 
@@ -67,14 +55,14 @@ export interface MatchCreate {
 export interface ScreenshotUploadResult {
   id: string;
   match_id: string;
-  team_id: string;
+  team_id: string | null;
   ocr_status: OcrStatus;
 }
 
 export interface ScreenshotSummary {
   id: string;
   match_id: string;
-  team_id: string;
+  team_id: string | null;
   ocr_status: OcrStatus;
   error_message: string | null;
   created_at: string;
@@ -95,18 +83,21 @@ export interface OcrReviewPayload {
   players: PlayerKillEntry[];
   needs_review: boolean;
   error_message: string | null;
+  suggested_team_id: string | null;
+  suggested_team_name: string | null;
 }
 
 export interface MatchResultConfirm {
   screenshot_id: string;
   placement: number;
   players: PlayerKillEntry[];
+  team_id?: string | null;
+  team_name?: string | null;
 }
 
 export interface TeamLeaderboardRow {
   team_id: string;
   team_name: string;
-  clan_name: string;
   games_played: number;
   total_kills: number;
   placement_points: number;
