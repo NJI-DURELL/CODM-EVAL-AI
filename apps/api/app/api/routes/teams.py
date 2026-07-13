@@ -3,43 +3,39 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.deps import get_clan_repo, get_team_repo, require_tournament_owner
+from app.api.deps import get_team_repo, require_tournament_owner
 from app.models.schemas import Team, TeamCreate
-from app.repositories.clan_repository import ClanRepository
-from app.repositories.team_repository import TeamLimitExceededError, TeamRepository
+from app.repositories.team_repository import TeamRepository
 
-router = APIRouter(prefix="/tournaments/{tournament_id}/clans/{clan_id}/teams", tags=["teams"])
+router = APIRouter(prefix="/tournaments/{tournament_id}/teams", tags=["teams"])
 
 
-def _require_clan_in_tournament(
+def _require_team_in_tournament(
     tournament_id: UUID,
-    clan_id: UUID,
-    clan_repo: Annotated[ClanRepository, Depends(get_clan_repo)],
+    team_id: UUID,
+    team_repo: Annotated[TeamRepository, Depends(get_team_repo)],
     _owner=Depends(require_tournament_owner),
 ):
-    clan = clan_repo.get(clan_id)
-    if clan is None or clan.tournament_id != tournament_id:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Clan not found in this tournament")
-    return clan
+    team = team_repo.get(team_id)
+    if team is None or team.tournament_id != tournament_id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Team not found in this tournament")
+    return team
 
 
 @router.post("", response_model=Team, status_code=201)
 def create_team(
-    clan_id: UUID,
+    tournament_id: UUID,
     payload: TeamCreate,
     repo: Annotated[TeamRepository, Depends(get_team_repo)],
-    _clan=Depends(_require_clan_in_tournament),
+    _owner=Depends(require_tournament_owner),
 ) -> Team:
-    try:
-        return repo.create(clan_id, payload)
-    except TeamLimitExceededError as exc:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+    return repo.create(tournament_id, payload)
 
 
 @router.get("", response_model=list[Team])
 def list_teams(
-    clan_id: UUID,
+    tournament_id: UUID,
     repo: Annotated[TeamRepository, Depends(get_team_repo)],
-    _clan=Depends(_require_clan_in_tournament),
+    _owner=Depends(require_tournament_owner),
 ) -> list[Team]:
-    return repo.list_for_clan(clan_id)
+    return repo.list_for_tournament(tournament_id)

@@ -4,7 +4,6 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Response
 
 from app.api.deps import (
-    get_clan_repo,
     get_leaderboard_repo,
     get_match_repo,
     get_player_repo,
@@ -12,7 +11,6 @@ from app.api.deps import (
     require_tournament_owner,
 )
 from app.models.schemas import Tournament
-from app.repositories.clan_repository import ClanRepository
 from app.repositories.leaderboard_repository import LeaderboardRepository
 from app.repositories.match_repository import MatchRepository
 from app.repositories.player_repository import PlayerRepository
@@ -26,13 +24,12 @@ router = APIRouter(prefix="/tournaments/{tournament_id}/reports", tags=["reports
 def download_pdf_report(
     tournament_id: UUID,
     leaderboard_repo: Annotated[LeaderboardRepository, Depends(get_leaderboard_repo)],
-    clan_repo: Annotated[ClanRepository, Depends(get_clan_repo)],
     team_repo: Annotated[TeamRepository, Depends(get_team_repo)],
     player_repo: Annotated[PlayerRepository, Depends(get_player_repo)],
     match_repo: Annotated[MatchRepository, Depends(get_match_repo)],
     tournament: Annotated[Tournament, Depends(require_tournament_owner)],
 ) -> Response:
-    service = PdfReportService(leaderboard_repo, clan_repo, team_repo, player_repo, match_repo)
+    service = PdfReportService(leaderboard_repo, team_repo, player_repo, match_repo)
     pdf_bytes = service.generate(tournament)
     filename = f"{tournament.name.replace(' ', '_')}_report.pdf"
     return Response(

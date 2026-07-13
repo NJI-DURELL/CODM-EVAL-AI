@@ -13,10 +13,10 @@ class ScreenshotRepository:
     def __init__(self, db: Client):
         self.db = db
 
-    def create(self, match_id: UUID, team_id: UUID, storage_path: str, content_hash: str) -> dict:
+    def create(self, match_id: UUID, storage_path: str, content_hash: str) -> dict:
+        # team_id is unknown until OCR + review resolve it (see confirm_match_result).
         row = {
             "match_id": str(match_id),
-            "team_id": str(team_id),
             "storage_path": storage_path,
             "content_hash": content_hash,
             "ocr_status": OcrStatus.UPLOADING,
@@ -103,4 +103,6 @@ class ScreenshotRepository:
         if stat_rows:
             self.db.table(PLAYER_MATCH_STATS).insert(stat_rows).execute()
 
-        self.update_status(screenshot_id, OcrStatus.COMPLETED)
+        self.db.table(SCREENSHOTS).update(
+            {"team_id": str(team_id), "ocr_status": OcrStatus.COMPLETED}
+        ).eq("id", str(screenshot_id)).execute()

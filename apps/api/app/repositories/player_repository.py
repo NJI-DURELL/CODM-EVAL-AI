@@ -25,8 +25,8 @@ class PlayerRepository:
     def list_for_tournament(self, tournament_id: UUID) -> list[Player]:
         result = (
             self.db.table(TABLE)
-            .select("*, teams!inner(clan_id, clans!inner(tournament_id))")
-            .eq("teams.clans.tournament_id", str(tournament_id))
+            .select("*, teams!inner(tournament_id)")
+            .eq("teams.tournament_id", str(tournament_id))
             .execute()
         )
         return [Player(**{k: v for k, v in row.items() if k != "teams"}) for row in result.data]

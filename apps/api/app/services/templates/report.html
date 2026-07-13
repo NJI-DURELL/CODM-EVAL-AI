@@ -179,7 +179,6 @@
 
   <h2 class="section">Tournament Summary</h2>
   <div class="summary-grid">
-    <div class="stat"><div class="n">{{ summary.clans }}</div><div class="l">Clans</div></div>
     <div class="stat"><div class="n">{{ summary.teams }}</div><div class="l">Teams</div></div>
     <div class="stat"><div class="n">{{ summary.players }}</div><div class="l">Players</div></div>
     <div class="stat"><div class="n">{{ summary.matches }}</div><div class="l">Matches</div></div>
@@ -196,26 +195,25 @@
     <div class="accolade-card">
       <div class="label">Best Team</div>
       <div class="value">{{ awards.best_team.team_name if awards.best_team else "—" }}</div>
-      {% if awards.best_team %}<div class="detail">{{ awards.best_team.total_points }} pts · {{ awards.best_team.clan_name }}</div>{% endif %}
+      {% if awards.best_team %}<div class="detail">{{ awards.best_team.total_points }} pts</div>{% endif %}
     </div>
     <div class="accolade-card">
       <div class="label">Most Kills (Team)</div>
       <div class="value">{{ awards.most_kills_team.team_name if awards.most_kills_team else "—" }}</div>
-      {% if awards.most_kills_team %}<div class="detail">{{ awards.most_kills_team.total_kills }} total kills · {{ awards.most_kills_team.clan_name }}</div>{% endif %}
+      {% if awards.most_kills_team %}<div class="detail">{{ awards.most_kills_team.total_kills }} total kills</div>{% endif %}
     </div>
   </div>
 
   <h2 class="section">Team Leaderboard</h2>
   <table>
     <thead>
-      <tr><th>#</th><th>Team</th><th>Clan</th><th>Games</th><th>Kills</th><th>Points</th></tr>
+      <tr><th>#</th><th>Team</th><th>Games</th><th>Kills</th><th>Points</th></tr>
     </thead>
     <tbody>
       {% for row in team_leaderboard %}
       <tr>
         <td>{{ loop.index }}</td>
         <td>{{ row.team_name }}</td>
-        <td>{{ row.clan_name }}</td>
         <td>{{ row.games_played }}</td>
         <td>{{ row.total_kills }}</td>
         <td>{{ "%.1f"|format(row.total_points) }}</td>

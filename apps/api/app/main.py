@@ -11,7 +11,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
-    clans,
     leaderboard,
     matches,
     players,
@@ -37,9 +36,9 @@ app.add_middleware(
 )
 
 app.include_router(tournaments.router)
-app.include_router(clans.router)
 app.include_router(teams.router)
 app.include_router(players.router)
+app.include_router(players.tournament_players_router)
 app.include_router(matches.router)
 app.include_router(uploads.router)
 app.include_router(leaderboard.router)

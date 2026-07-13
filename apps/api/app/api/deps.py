@@ -6,7 +6,6 @@ from supabase import Client
 
 from app.core.auth import get_current_organizer_id
 from app.core.supabase_client import get_supabase
-from app.repositories.clan_repository import ClanRepository
 from app.repositories.leaderboard_repository import LeaderboardRepository
 from app.repositories.match_repository import MatchRepository
 from app.repositories.player_repository import PlayerRepository
@@ -20,10 +19,6 @@ Db = Annotated[Client, Depends(get_supabase)]
 
 def get_tournament_repo(db: Db) -> TournamentRepository:
     return TournamentRepository(db)
-
-
-def get_clan_repo(db: Db) -> ClanRepository:
-    return ClanRepository(db)
 
 
 def get_team_repo(db: Db) -> TeamRepository:

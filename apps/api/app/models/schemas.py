@@ -28,23 +28,13 @@ class Tournament(TournamentCreate):
     created_at: datetime
 
 
-class ClanCreate(BaseModel):
-    name: str
-    logo_url: str | None = None
-
-
-class Clan(ClanCreate):
-    id: UUID
-    tournament_id: UUID
-
-
 class TeamCreate(BaseModel):
     name: str
 
 
 class Team(TeamCreate):
     id: UUID
-    clan_id: UUID
+    tournament_id: UUID
 
 
 class PlayerCreate(BaseModel):
@@ -69,14 +59,14 @@ class Match(MatchCreate):
 class ScreenshotUploadResult(BaseModel):
     id: UUID
     match_id: UUID
-    team_id: UUID
+    team_id: UUID | None
     ocr_status: OcrStatus
 
 
 class ScreenshotSummary(BaseModel):
     id: UUID
     match_id: UUID
-    team_id: UUID
+    team_id: UUID | None
     ocr_status: OcrStatus
     error_message: str | None = None
     created_at: datetime
@@ -97,18 +87,21 @@ class OcrReviewPayload(BaseModel):
     players: list[PlayerKillEntry]
     needs_review: bool
     error_message: str | None = None
+    suggested_team_id: UUID | None = None
+    suggested_team_name: str | None = None
 
 
 class MatchResultConfirm(BaseModel):
     screenshot_id: UUID
     placement: int
     players: list[PlayerKillEntry]
+    team_id: UUID | None = None
+    team_name: str | None = None
 
 
 class TeamLeaderboardRow(BaseModel):
     team_id: UUID
     team_name: str
-    clan_name: str
     games_played: int
     total_kills: int
     placement_points: int

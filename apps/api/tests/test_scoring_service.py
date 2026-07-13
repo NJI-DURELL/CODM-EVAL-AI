@@ -11,7 +11,6 @@ def _team_row(name: str, total_points: float, total_kills: int) -> TeamLeaderboa
     return TeamLeaderboardRow(
         team_id=uuid4(),
         team_name=name,
-        clan_name="Clan X",
         games_played=3,
         total_kills=total_kills,
         placement_points=0,
