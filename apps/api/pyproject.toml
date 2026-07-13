@@ -9,6 +9,10 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+# B008: FastAPI's `Depends(...)` is designed to be called in argument defaults
+# (it's a sentinel resolved by FastAPI at request time, not a mutable-default
+# hazard) — this is the standard pattern throughout app/api/routes and deps.py.
+ignore = ["B008"]
 
 [tool.mypy]
 python_version = "3.11"

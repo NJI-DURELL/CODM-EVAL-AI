@@ -61,7 +61,11 @@ class ScreenshotRepository:
 
     def get(self, screenshot_id: UUID) -> dict | None:
         result = (
-            self.db.table(SCREENSHOTS).select("*").eq("id", str(screenshot_id)).maybe_single().execute()
+            self.db.table(SCREENSHOTS)
+            .select("*")
+            .eq("id", str(screenshot_id))
+            .maybe_single()
+            .execute()
         )
         return result.data
 

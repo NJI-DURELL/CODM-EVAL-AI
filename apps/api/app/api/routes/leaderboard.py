@@ -35,4 +35,6 @@ def awards(
     repo: Annotated[LeaderboardRepository, Depends(get_leaderboard_repo)],
     _owner=Depends(require_tournament_owner),
 ) -> Awards:
-    return compute_awards(repo.team_leaderboard(tournament_id), repo.player_leaderboard(tournament_id))
+    return compute_awards(
+        repo.team_leaderboard(tournament_id), repo.player_leaderboard(tournament_id)
+    )

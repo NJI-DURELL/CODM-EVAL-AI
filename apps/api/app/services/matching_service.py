@@ -30,14 +30,18 @@ class MatchingService:
 
     def match(self, ocr_name: str, roster: list[Player]) -> MatchCandidate:
         if not roster:
-            return MatchCandidate(player_id=None, matched_name=None, confidence=0.0, needs_review=True)
+            return MatchCandidate(
+                player_id=None, matched_name=None, confidence=0.0, needs_review=True
+            )
 
         choices = {str(p.id): (p.ign or p.name) for p in roster}
         best = process.extractOne(
             ocr_name, choices, scorer=fuzz.WRatio, score_cutoff=self.min_score
         )
         if best is None:
-            return MatchCandidate(player_id=None, matched_name=None, confidence=0.0, needs_review=True)
+            return MatchCandidate(
+                player_id=None, matched_name=None, confidence=0.0, needs_review=True
+            )
 
         matched_name, score, player_id = best
         return MatchCandidate(

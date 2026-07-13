@@ -17,7 +17,9 @@ class PlayerRepository:
         return Player(**result.data[0])
 
     def list_for_team(self, team_id: UUID) -> list[Player]:
-        result = self.db.table(TABLE).select("*").eq("team_id", str(team_id)).order("name").execute()
+        result = (
+            self.db.table(TABLE).select("*").eq("team_id", str(team_id)).order("name").execute()
+        )
         return [Player(**row) for row in result.data]
 
     def list_for_tournament(self, tournament_id: UUID) -> list[Player]:

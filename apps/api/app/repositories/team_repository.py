@@ -27,11 +27,15 @@ class TeamRepository:
         return Team(**result.data[0])
 
     def count_for_clan(self, clan_id: UUID) -> int:
-        result = self.db.table(TABLE).select("id", count="exact").eq("clan_id", str(clan_id)).execute()
+        result = (
+            self.db.table(TABLE).select("id", count="exact").eq("clan_id", str(clan_id)).execute()
+        )
         return result.count or 0
 
     def list_for_clan(self, clan_id: UUID) -> list[Team]:
-        result = self.db.table(TABLE).select("*").eq("clan_id", str(clan_id)).order("name").execute()
+        result = (
+            self.db.table(TABLE).select("*").eq("clan_id", str(clan_id)).order("name").execute()
+        )
         return [Team(**row) for row in result.data]
 
     def get(self, team_id: UUID) -> Team | None:

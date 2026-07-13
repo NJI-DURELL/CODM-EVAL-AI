@@ -3,7 +3,7 @@ import io
 from PIL import Image, UnidentifiedImageError
 
 from app.core.logging import get_logger
-from app.models.schemas import OcrReviewPayload, PlayerKillEntry, Player
+from app.models.schemas import OcrReviewPayload, Player, PlayerKillEntry
 from app.ocr.codm_parser import OcrParseError, parse_scoreboard
 from app.ocr.paddle_engine import run_ocr
 from app.services.matching_service import MatchingService
@@ -29,7 +29,10 @@ class OcrService:
                 team_kills=None,
                 players=[],
                 needs_review=True,
-                error_message="This file could not be read as an image. Please re-upload a clear screenshot.",
+                error_message=(
+                    "This file could not be read as an image. "
+                    "Please re-upload a clear screenshot."
+                ),
             )
 
         try:
@@ -43,7 +46,9 @@ class OcrService:
                 team_kills=None,
                 players=[],
                 needs_review=True,
-                error_message=f"Couldn't read the scoreboard clearly ({exc}). Please review manually.",
+                error_message=(
+                    f"Couldn't read the scoreboard clearly ({exc}). Please review manually."
+                ),
             )
         except Exception:
             logger.exception("Unexpected OCR failure for screenshot %s", screenshot_id)
@@ -53,7 +58,10 @@ class OcrService:
                 team_kills=None,
                 players=[],
                 needs_review=True,
-                error_message="OCR processing failed unexpectedly. Please try again or enter results manually.",
+                error_message=(
+                    "OCR processing failed unexpectedly. "
+                    "Please try again or enter results manually."
+                ),
             )
 
         entries: list[PlayerKillEntry] = []

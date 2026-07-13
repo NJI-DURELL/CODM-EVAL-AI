@@ -8,7 +8,8 @@ PLACEMENT_PATTERNS = [
     re.compile(r"^#\s*(\d{1,2})$"),
 ]
 BARE_NUMBER_PATTERN = re.compile(r"^\d{1,3}$")
-ROW_Y_TOLERANCE_PX = 18  # tuned against real CODM squad-result screenshots; recalibrate per aspect ratio
+# Tuned against real CODM squad-result screenshots; recalibrate per aspect ratio.
+ROW_Y_TOLERANCE_PX = 18
 
 
 class OcrParseError(Exception):

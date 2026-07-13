@@ -79,7 +79,10 @@ def test_compute_awards_handles_empty_leaderboards():
 
 
 def test_compute_awards_tie_break_is_deterministic():
-    teams = [_team_row("Ravens", total_points=50, total_kills=50), _team_row("Wolves", total_points=50, total_kills=10)]
+    teams = [
+        _team_row("Ravens", total_points=50, total_kills=50),
+        _team_row("Wolves", total_points=50, total_kills=10),
+    ]
     first = compute_awards(teams, [])
     second = compute_awards(teams, [])
     assert first.best_team.team_name == second.best_team.team_name

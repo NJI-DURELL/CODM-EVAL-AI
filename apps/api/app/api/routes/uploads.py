@@ -54,7 +54,9 @@ async def upload_screenshot(
 
     service = UploadService(db, screenshot_repo, player_repo)
     try:
-        screenshot = service.accept_upload(match_id, team_id, file.filename or "screenshot", content)
+        screenshot = service.accept_upload(
+            match_id, team_id, file.filename or "screenshot", content
+        )
     except DuplicateUploadError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
 
@@ -93,7 +95,11 @@ def get_screenshot_status(
     if not screenshot.get("raw_ocr_json"):
         # Still uploading/OCR-ing — frontend should keep polling.
         return OcrReviewPayload(
-            screenshot_id=screenshot_id, placement=None, team_kills=None, players=[], needs_review=False
+            screenshot_id=screenshot_id,
+            placement=None,
+            team_kills=None,
+            players=[],
+            needs_review=False,
         )
 
     return OcrReviewPayload(**screenshot["raw_ocr_json"])

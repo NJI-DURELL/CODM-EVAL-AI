@@ -26,7 +26,11 @@ def team_points_chart(teams: list[TeamLeaderboardRow], top_n: int = 10) -> str |
         return None
     top = teams[:top_n]
     fig, ax = plt.subplots(figsize=(6, 3.2))
-    ax.barh([t.team_name for t in reversed(top)], [t.total_points for t in reversed(top)], color=CAMEROON_GREEN)
+    ax.barh(
+        [t.team_name for t in reversed(top)],
+        [t.total_points for t in reversed(top)],
+        color=CAMEROON_GREEN,
+    )
     ax.set_xlabel("Total Points")
     ax.set_title("Team Standings")
     fig.tight_layout()

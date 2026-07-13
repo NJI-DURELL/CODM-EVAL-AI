@@ -39,8 +39,12 @@ class PdfReportService:
         return len(clans), team_count
 
     def generate(self, tournament: Tournament) -> bytes:
-        team_rows: list[TeamLeaderboardRow] = self.leaderboard_repo.team_leaderboard(tournament.id)
-        player_rows: list[PlayerLeaderboardRow] = self.leaderboard_repo.player_leaderboard(tournament.id)
+        team_rows: list[TeamLeaderboardRow] = self.leaderboard_repo.team_leaderboard(
+            tournament.id
+        )
+        player_rows: list[PlayerLeaderboardRow] = self.leaderboard_repo.player_leaderboard(
+            tournament.id
+        )
         awards: Awards = compute_awards(team_rows, player_rows)
 
         clan_count, team_count = self._team_and_clan_counts(tournament.id)

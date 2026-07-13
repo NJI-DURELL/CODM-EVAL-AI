@@ -12,13 +12,21 @@ class ClanRepository:
         self.db = db
 
     def create(self, tournament_id: UUID, payload: ClanCreate) -> Clan:
-        row = {"tournament_id": str(tournament_id), "name": payload.name, "logo_url": payload.logo_url}
+        row = {
+            "tournament_id": str(tournament_id),
+            "name": payload.name,
+            "logo_url": payload.logo_url,
+        }
         result = self.db.table(TABLE).insert(row).execute()
         return Clan(**result.data[0])
 
     def list_for_tournament(self, tournament_id: UUID) -> list[Clan]:
         result = (
-            self.db.table(TABLE).select("*").eq("tournament_id", str(tournament_id)).order("name").execute()
+            self.db.table(TABLE)
+            .select("*")
+            .eq("tournament_id", str(tournament_id))
+            .order("name")
+            .execute()
         )
         return [Clan(**row) for row in result.data]
 

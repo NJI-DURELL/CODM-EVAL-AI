@@ -27,5 +27,7 @@ def list_tournaments(
 
 
 @router.get("/{tournament_id}", response_model=Tournament)
-def get_tournament(tournament: Annotated[Tournament, Depends(require_tournament_owner)]) -> Tournament:
+def get_tournament(
+    tournament: Annotated[Tournament, Depends(require_tournament_owner)],
+) -> Tournament:
     return tournament
