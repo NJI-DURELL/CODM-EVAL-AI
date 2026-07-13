@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page {
+    size: A4;
+    margin: 2.2cm 1.8cm 2.6cm 1.8cm;
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 9px;
+      color: #7a7a7a;
+    }
+    @bottom-left {
+      content: "Built by OG Clan Engines";
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 9px;
+      color: #7a7a7a;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #1a1a1a;
+    font-size: 11px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-28deg);
+    font-size: 180px;
+    font-weight: 800;
+    letter-spacing: 10px;
+    color: #007A5E;
+    opacity: 0.04;
+    z-index: -1;
+    white-space: nowrap;
+  }
+
+  .flag-stripe {
+    display: flex;
+    height: 6px;
+    width: 100%;
+    margin-bottom: 18px;
+  }
+  .flag-stripe span { flex: 1; }
+  .flag-stripe .green { background: #007A5E; }
+  .flag-stripe .red { background: #CE1126; }
+  .flag-stripe .yellow { background: #FCD116; }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .header img.logo {
+    height: 64px;
+    width: 64px;
+    object-fit: contain;
+  }
+  .header .title h1 {
+    font-size: 22px;
+    margin: 0 0 4px 0;
+    color: #007A5E;
+    letter-spacing: 0.5px;
+  }
+  .header .title .subtitle {
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .header .meta {
+    text-align: right;
+    font-size: 10px;
+    color: #555;
+  }
+
+  h2.section {
+    font-size: 14px;
+    color: #1a1a1a;
+    border-bottom: 2px solid #FCD116;
+    padding-bottom: 4px;
+    margin: 26px 0 10px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+  }
+  th, td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 10.5px;
+  }
+  th {
+    background: #007A5E;
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 9.5px;
+    letter-spacing: 0.4px;
+  }
+  tr:nth-child(even) td { background: #f7f7f7; }
+
+  .accolades {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .accolade-card {
+    flex: 1;
+    border: 1px solid #e5e5e5;
+    border-top: 4px solid #CE1126;
+    border-radius: 4px;
+    padding: 12px;
+  }
+  .accolade-card .label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  .accolade-card .value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  .accolade-card .detail {
+    font-size: 9.5px;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  .charts { display: flex; gap: 10px; margin-top: 8px; }
+  .charts img { width: 50%; }
+
+  .summary-grid {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .summary-grid .stat {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background: #f7f7f7;
+    border-radius: 4px;
+  }
+  .summary-grid .stat .n { font-size: 18px; font-weight: 700; color: #007A5E; }
+  .summary-grid .stat .l { font-size: 9px; color: #666; text-transform: uppercase; }
+</style>
+</head>
+<body>
+  <div class="watermark">DN</div>
+  <div class="flag-stripe"><span class="green"></span><span class="red"></span><span class="yellow"></span></div>
+
+  <div class="header">
+    {% if logo_url %}<img class="logo" src="{{ logo_url }}">{% endif %}
+    <div class="title">
+      <h1>{{ tournament_name }}</h1>
+      <div class="subtitle">Official Tournament Report</div>
+    </div>
+    <div class="meta">
+      <div>{{ event_date }}</div>
+      <div>Generated {{ generated_at }}</div>
+    </div>
+  </div>
+
+  <h2 class="section">Tournament Summary</h2>
+  <div class="summary-grid">
+    <div class="stat"><div class="n">{{ summary.clans }}</div><div class="l">Clans</div></div>
+    <div class="stat"><div class="n">{{ summary.teams }}</div><div class="l">Teams</div></div>
+    <div class="stat"><div class="n">{{ summary.players }}</div><div class="l">Players</div></div>
+    <div class="stat"><div class="n">{{ summary.matches }}</div><div class="l">Matches</div></div>
+    <div class="stat"><div class="n">{{ summary.total_kills }}</div><div class="l">Total Kills</div></div>
+  </div>
+
+  <h2 class="section">Accolades</h2>
+  <div class="accolades">
+    <div class="accolade-card">
+      <div class="label">MVP</div>
+      <div class="value">{{ awards.mvp.player_name if awards.mvp else "—" }}</div>
+      {% if awards.mvp %}<div class="detail">{{ awards.mvp.total_kills }} total kills · {{ "%.2f"|format(awards.mvp.avg_kills_per_game) }} avg/game · {{ awards.mvp.team_name }}</div>{% endif %}
+    </div>
+    <div class="accolade-card">
+      <div class="label">Best Team</div>
+      <div class="value">{{ awards.best_team.team_name if awards.best_team else "—" }}</div>
+      {% if awards.best_team %}<div class="detail">{{ awards.best_team.total_points }} pts · {{ awards.best_team.clan_name }}</div>{% endif %}
+    </div>
+    <div class="accolade-card">
+      <div class="label">Most Kills (Team)</div>
+      <div class="value">{{ awards.most_kills_team.team_name if awards.most_kills_team else "—" }}</div>
+      {% if awards.most_kills_team %}<div class="detail">{{ awards.most_kills_team.total_kills }} total kills · {{ awards.most_kills_team.clan_name }}</div>{% endif %}
+    </div>
+  </div>
+
+  <h2 class="section">Team Leaderboard</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Team</th><th>Clan</th><th>Games</th><th>Kills</th><th>Points</th></tr>
+    </thead>
+    <tbody>
+      {% for row in team_leaderboard %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.team_name }}</td>
+        <td>{{ row.clan_name }}</td>
+        <td>{{ row.games_played }}</td>
+        <td>{{ row.total_kills }}</td>
+        <td>{{ "%.1f"|format(row.total_points) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2 class="section">Player Rankings</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Player</th><th>Team</th><th>Games</th><th>Total Kills</th><th>Avg Kills/Game</th></tr>
+    </thead>
+    <tbody>
+      {% for row in player_leaderboard %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.player_name }}</td>
+        <td>{{ row.team_name }}</td>
+        <td>{{ row.games_played }}</td>
+        <td>{{ row.total_kills }}</td>
+        <td>{{ "%.2f"|format(row.avg_kills_per_game) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2 class="section">Charts</h2>
+  <div class="charts">
+    {% if team_chart %}<img src="{{ team_chart }}">{% endif %}
+    {% if player_chart %}<img src="{{ player_chart }}">{% endif %}
+  </div>
+</body>
+</html>
