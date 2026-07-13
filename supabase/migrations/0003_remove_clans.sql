@@ -9,6 +9,13 @@
 
 truncate table player_match_stats, match_results, screenshots, players, teams, clans cascade;
 
+-- Drop everything that reads teams.clan_id before the column goes away —
+-- both leaderboard views and both RLS policies join through it.
+drop view if exists team_leaderboard_view;
+drop view if exists player_leaderboard_view;
+drop policy if exists "Organizers manage own teams" on teams;
+drop policy if exists "Organizers manage own players" on players;
+
 -- ─── teams: tournament-scoped, no clan, no 5-per-clan cap ────────────────
 alter table teams drop constraint if exists teams_clan_id_fkey;
 drop trigger if exists trg_max_teams_per_clan on teams;
