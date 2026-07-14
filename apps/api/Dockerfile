@@ -18,7 +18,8 @@ RUN pip install --no-cache-dir --default-timeout=180 --retries 10 -r requirement
 
 COPY app ./app
 
-# Hugging Face Spaces (Docker SDK) routes traffic to this port by default.
-EXPOSE 7860
+EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Render (and most PaaS Docker runners) inject $PORT at container start rather
+# than a fixed port — shell form so that substitution actually happens.
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
