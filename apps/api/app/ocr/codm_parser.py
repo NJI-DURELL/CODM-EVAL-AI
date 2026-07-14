@@ -1,6 +1,8 @@
 import re
 from dataclasses import dataclass
 
+from PIL import Image
+
 from app.ocr.paddle_engine import OcrToken
 
 TEAM_LABEL_PATTERN = re.compile(r"^TEAM(\d+)$", re.IGNORECASE)
@@ -14,6 +16,26 @@ HEADER_BAND_Y_TOLERANCE_PX = 30
 COLUMN_CLUSTER_THRESHOLD_PX = 250
 COLUMN_BOUNDARY_SLACK_PX = 20
 MAX_PLAYERS_PER_TEAM = 4
+
+# Ranks 1-3 render as a fixed-color medal badge (gold/silver/bronze) behind
+# the digit, regardless of which team holds that placement — a far more
+# reliable signal than OCR'ing the tiny digit inside the medal graphic,
+# which is where misreads concentrate (see tests/test_codm_parser.py). From
+# rank 4 on, the badge is just that row's own accent color, so it carries no
+# rank information and this table intentionally stops at 3. Reference RGBs
+# sampled directly from a real screenshot (photo_2026-07-14_01-27-24.jpg).
+MEDAL_COLORS: dict[int, tuple[int, int, int]] = {
+    1: (221, 173, 46),  # gold
+    2: (154, 167, 201),  # silver
+    3: (168, 109, 60),  # bronze
+}
+MEDAL_COLOR_MAX_DISTANCE = 35
+BADGE_SAMPLE_HALF_SIZE_PX = 18
+# Fallback badge position offset (label position minus this) for the rare
+# case where every badge in a screenshot OCR'd to non-digit noise, so no
+# per-image offset could be measured. Same reference screenshot as above.
+DEFAULT_BADGE_X_OFFSET = 346.0
+DEFAULT_BADGE_Y_OFFSET = 21.0
 
 
 class OcrParseError(Exception):
@@ -87,7 +109,39 @@ def _row_to_player(row: list[OcrToken]) -> ParsedPlayerRow | None:
     return ParsedPlayerRow(ocr_name=name, kills=kills)
 
 
-def _extract_headers(tokens: list[OcrToken]) -> tuple[list[_Header], set[int], list[float]]:
+def _classify_medal_color(rgb: tuple[int, int, int]) -> int | None:
+    best_rank: int | None = None
+    best_distance = MEDAL_COLOR_MAX_DISTANCE
+    for rank, ref in MEDAL_COLORS.items():
+        distance = sum((a - b) ** 2 for a, b in zip(rgb, ref, strict=True)) ** 0.5
+        if distance < best_distance:
+            best_distance = distance
+            best_rank = rank
+    return best_rank
+
+
+def _sample_average_color(image: Image.Image, x: float, y: float) -> tuple[int, int, int] | None:
+    half = BADGE_SAMPLE_HALF_SIZE_PX
+    left = max(0, int(x - half))
+    top = max(0, int(y - half))
+    right = min(image.width, int(x + half))
+    bottom = min(image.height, int(y + half))
+    if right <= left or bottom <= top:
+        return None
+    pixels = list(image.crop((left, top, right, bottom)).getdata())
+    if not pixels:
+        return None
+    n = len(pixels)
+    return (
+        round(sum(p[0] for p in pixels) / n),
+        round(sum(p[1] for p in pixels) / n),
+        round(sum(p[2] for p in pixels) / n),
+    )
+
+
+def _extract_headers(
+    tokens: list[OcrToken],
+) -> tuple[list[_Header], set[int], list[float], tuple[float, float]]:
     """Finds every "TEAMn" token and pairs it with the rank badge (a bare
     1-2 digit number) sitting just above it in the same header band.
 
@@ -102,7 +156,7 @@ def _extract_headers(tokens: list[OcrToken]) -> tuple[list[_Header], set[int], l
     """
     team_tokens = [t for t in tokens if TEAM_LABEL_PATTERN.match(t.text.strip())]
     if not team_tokens:
-        return [], set(), []
+        return [], set(), [], (DEFAULT_BADGE_X_OFFSET, DEFAULT_BADGE_Y_OFFSET)
     rank_tokens = [t for t in tokens if RANK_BADGE_PATTERN.match(t.text.strip())]
 
     header_pool = team_tokens + rank_tokens
@@ -123,16 +177,26 @@ def _extract_headers(tokens: list[OcrToken]) -> tuple[list[_Header], set[int], l
                 pending_badge = token
 
     if not raw:
-        return [], set(), []
+        return [], set(), [], (DEFAULT_BADGE_X_OFFSET, DEFAULT_BADGE_Y_OFFSET)
 
     label_clusters = _cluster_1d(
         [label.x_center for _, label, _ in raw], COLUMN_CLUSTER_THRESHOLD_PX
     )
 
-    badge_offsets = [
+    badge_x_offsets = [
         label.x_center - badge.x_center for _, label, badge in raw if badge is not None
     ]
-    typical_offset = sum(badge_offsets) / len(badge_offsets) if badge_offsets else 0.0
+    badge_y_offsets = [
+        label.y_center - badge.y_center for _, label, badge in raw if badge is not None
+    ]
+    typical_offset = sum(badge_x_offsets) / len(badge_x_offsets) if badge_x_offsets else 0.0
+    typical_y_offset = (
+        sum(badge_y_offsets) / len(badge_y_offsets) if badge_y_offsets else DEFAULT_BADGE_Y_OFFSET
+    )
+    badge_offset = (
+        typical_offset if badge_x_offsets else DEFAULT_BADGE_X_OFFSET,
+        typical_y_offset,
+    )
 
     column_anchors: list[float] = []
     for cluster in label_clusters:
@@ -160,7 +224,7 @@ def _extract_headers(tokens: list[OcrToken]) -> tuple[list[_Header], set[int], l
         if badge is not None:
             consumed_ids.add(id(badge))
 
-    return headers, consumed_ids, boundaries
+    return headers, consumed_ids, boundaries, badge_offset
 
 
 def _assign_column(x: float, boundaries: list[float]) -> int:
@@ -173,18 +237,39 @@ def _assign_column(x: float, boundaries: list[float]) -> int:
     return column
 
 
-def parse_scoreboard(tokens: list[OcrToken]) -> list[ParsedTeamBlock]:
+def parse_scoreboard(
+    tokens: list[OcrToken], image: Image.Image | None = None
+) -> list[ParsedTeamBlock]:
     """Parses CODM's RANK-tab results screen: a grid of up to 9 visible
     team blocks (rank badge + "TEAMn" label + 2-4 players with kills), 3
     per row, with more reachable by scrolling — very different from a
     single-squad result card. One screenshot can yield multiple teams.
+
+    When `image` is given, ranks 1-3 are additionally (and preferentially)
+    identified by the badge's fixed medal color (gold/silver/bronze) rather
+    than trusting OCR of the small digit inside that medal graphic, which is
+    where misreads concentrate — see MEDAL_COLORS.
     """
     if not tokens:
         raise OcrParseError("No text detected in screenshot")
 
-    headers, consumed_ids, boundaries = _extract_headers(tokens)
+    headers, consumed_ids, boundaries, badge_offset = _extract_headers(tokens)
     if not headers:
         raise OcrParseError("Could not find any team headers in screenshot")
+
+    if image is not None:
+        rgb_image = image.convert("RGB")
+        offset_x, offset_y = badge_offset
+        for header in headers:
+            sample = _sample_average_color(
+                rgb_image,
+                header.label_token.x_center - offset_x,
+                header.label_token.y_center - offset_y,
+            )
+            if sample is not None:
+                medal_rank = _classify_medal_color(sample)
+                if medal_rank is not None:
+                    header.rank = medal_rank
 
     remaining = [t for t in tokens if id(t) not in consumed_ids]
     by_column: dict[int, list[OcrToken]] = {}

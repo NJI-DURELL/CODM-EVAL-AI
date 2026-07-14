@@ -41,7 +41,7 @@ class OcrService:
 
         try:
             tokens = run_ocr(image)
-            blocks = parse_scoreboard(tokens)
+            blocks = parse_scoreboard(tokens, image=image)
         except OcrParseError as exc:
             logger.info("OCR parse failure for %s: %s", screenshot_id, exc)
             return OcrReviewPayload(
