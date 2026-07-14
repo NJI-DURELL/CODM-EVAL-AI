@@ -24,7 +24,11 @@ from app.repositories.match_repository import MatchRepository
 from app.repositories.player_repository import PlayerRepository
 from app.repositories.screenshot_repository import ScreenshotRepository
 from app.repositories.team_repository import TeamRepository
-from app.services.upload_service import DuplicateUploadError, UploadService
+from app.services.upload_service import (
+    DuplicateUploadError,
+    UnsupportedFileTypeError,
+    UploadService,
+)
 
 router = APIRouter(prefix="/tournaments/{tournament_id}/matches/{match_id}", tags=["uploads"])
 
@@ -59,9 +63,16 @@ async def upload_screenshot(
 
     service = UploadService(db, screenshot_repo, player_repo, team_repo)
     try:
-        screenshot = service.accept_upload(match_id, file.filename or "screenshot", content)
+        screenshot = service.accept_upload(
+            match_id,
+            file.filename or "screenshot",
+            content,
+            file.content_type or "application/octet-stream",
+        )
     except DuplicateUploadError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    except UnsupportedFileTypeError as exc:
+        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, str(exc)) from exc
 
     background_tasks.add_task(service.run_ocr_pipeline, screenshot["id"], tournament_id)
     return ScreenshotUploadResult(**screenshot)

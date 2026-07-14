@@ -1,6 +1,7 @@
 import hashlib
 from uuid import UUID, uuid4
 
+from storage3.exceptions import StorageApiError
 from supabase import Client
 
 from app.core.config import get_settings
@@ -15,6 +16,10 @@ logger = get_logger(__name__)
 
 
 class DuplicateUploadError(Exception):
+    pass
+
+
+class UnsupportedFileTypeError(Exception):
     pass
 
 
@@ -34,7 +39,9 @@ class UploadService:
         self.ocr_service = ocr_service or OcrService()
         self.bucket = get_settings().supabase_storage_bucket
 
-    def accept_upload(self, match_id: UUID, filename: str, content: bytes) -> dict:
+    def accept_upload(
+        self, match_id: UUID, filename: str, content: bytes, content_type: str
+    ) -> dict:
         content_hash = hashlib.sha256(content).hexdigest()
         if self.screenshot_repo.find_duplicate(match_id, content_hash):
             raise DuplicateUploadError(
@@ -42,9 +49,16 @@ class UploadService:
             )
 
         storage_path = f"{match_id}/{uuid4()}-{filename}"
-        self.db.storage.from_(self.bucket).upload(
-            storage_path, content, {"content-type": "image/*"}
-        )
+        try:
+            self.db.storage.from_(self.bucket).upload(
+                storage_path, content, {"content-type": content_type}
+            )
+        except StorageApiError as exc:
+            if "mime type" in str(exc).lower():
+                raise UnsupportedFileTypeError(
+                    "Unsupported file type. Please upload a PNG, JPEG, or WebP screenshot."
+                ) from exc
+            raise
         return self.screenshot_repo.create(match_id, storage_path, content_hash)
 
     def run_ocr_pipeline(self, screenshot_id: UUID, tournament_id: UUID) -> None:
