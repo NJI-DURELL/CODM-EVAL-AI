@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { ArrowLeftIcon, UploadIcon, Loader2Icon, ImageIcon } from "lucide-react";
 
 import { useMatch } from "@/lib/queries/matches";
-import { useTeams } from "@/lib/queries/teams";
 import { useMatchScreenshots, useUploadScreenshot } from "@/lib/queries/screenshots";
 import { OcrStatusBadge } from "@/components/ocr-status-badge";
 import { ScreenshotReviewPanel } from "@/components/screenshot-review-panel";
@@ -22,7 +21,6 @@ export default function MatchDetailPage({
 }) {
   const { tournamentId, matchId } = use(params);
   const { data: match } = useMatch(tournamentId, matchId);
-  const { data: teams } = useTeams(tournamentId);
   const { data: screenshots, isLoading: screenshotsLoading } = useMatchScreenshots(tournamentId, matchId);
   const uploadScreenshot = useUploadScreenshot(tournamentId, matchId);
 
@@ -31,9 +29,11 @@ export default function MatchDetailPage({
 
   const activeScreenshot = screenshots?.find((s) => s.id === activeScreenshotId);
 
-  function teamLabel(teamId: string | null) {
-    if (!teamId) return "Unreviewed";
-    return teams?.find((t) => t.id === teamId)?.name ?? "Unreviewed";
+  function uploadLabel(screenshot: { created_at: string }, index: number) {
+    return `Upload ${index + 1} — ${new Date(screenshot.created_at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -117,7 +117,7 @@ export default function MatchDetailPage({
                 </EmptyHeader>
               </Empty>
             )}
-            {screenshots?.map((s) => (
+            {screenshots?.map((s, index) => (
               <button
                 key={s.id}
                 onClick={() => setActiveScreenshotId(s.id)}
@@ -127,7 +127,7 @@ export default function MatchDetailPage({
                     : "border-border hover:bg-muted/50"
                 }`}
               >
-                <span className="font-medium">{teamLabel(s.team_id)}</span>
+                <span className="font-medium">{uploadLabel(s, index)}</span>
                 <OcrStatusBadge status={s.ocr_status} />
               </button>
             ))}
@@ -136,9 +136,7 @@ export default function MatchDetailPage({
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">
-              {activeScreenshot ? `Review — ${teamLabel(activeScreenshot.team_id)}` : "Review"}
-            </CardTitle>
+            <CardTitle className="text-base">Review</CardTitle>
           </CardHeader>
           <CardContent className="pt-1">
             {!activeScreenshot && (

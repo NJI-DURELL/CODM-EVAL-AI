@@ -55,14 +55,12 @@ export interface MatchCreate {
 export interface ScreenshotUploadResult {
   id: string;
   match_id: string;
-  team_id: string | null;
   ocr_status: OcrStatus;
 }
 
 export interface ScreenshotSummary {
   id: string;
   match_id: string;
-  team_id: string | null;
   ocr_status: OcrStatus;
   error_message: string | null;
   created_at: string;
@@ -76,23 +74,33 @@ export interface PlayerKillEntry {
   kills: number;
 }
 
-export interface OcrReviewPayload {
-  screenshot_id: string;
+export interface OcrTeamResult {
+  ocr_label: string;
   placement: number | null;
-  team_kills: number | null;
+  team_kills: number;
   players: PlayerKillEntry[];
   needs_review: boolean;
-  error_message: string | null;
   suggested_team_id: string | null;
   suggested_team_name: string | null;
 }
 
-export interface MatchResultConfirm {
+export interface OcrReviewPayload {
   screenshot_id: string;
-  placement: number;
-  players: PlayerKillEntry[];
+  teams: OcrTeamResult[];
+  needs_review: boolean;
+  error_message: string | null;
+}
+
+export interface TeamResultConfirm {
   team_id?: string | null;
   team_name?: string | null;
+  placement: number;
+  players: PlayerKillEntry[];
+}
+
+export interface MatchResultConfirm {
+  screenshot_id: string;
+  teams: TeamResultConfirm[];
 }
 
 export interface TeamLeaderboardRow {

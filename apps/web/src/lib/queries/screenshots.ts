@@ -55,7 +55,7 @@ export function useScreenshotReview(tournamentId: string, matchId: string, scree
     refetchInterval: (query) => {
       const data = query.state.data;
       if (!data) return 2000;
-      const stillWorking = !data.error_message && data.placement === null && data.players.length === 0;
+      const stillWorking = !data.error_message && data.teams.length === 0;
       return stillWorking ? 2000 : false;
     },
   });
