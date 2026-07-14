@@ -45,7 +45,7 @@ export function LeaderboardChart({ data, color, unit }: { data: ChartRow[]; colo
         />
         <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={20}>
           {chartData.map((row, i) => (
-            <Cell key={row.name} fill={i === chartData.length - 1 ? "var(--brand-yellow)" : color} />
+            <Cell key={`${row.name}-${i}`} fill={i === chartData.length - 1 ? "var(--brand-yellow)" : color} />
           ))}
           <LabelList
             dataKey="value"
