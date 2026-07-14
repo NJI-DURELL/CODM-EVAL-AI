@@ -1,9 +1,13 @@
 FROM python:3.11-slim-bookworm
 
-# libgl1/libglib2.0 for opencv (PaddleOCR dep); pango/cairo/gdk-pixbuf for WeasyPrint.
+# libgl1/libglib2.0 for opencv (PaddleOCR dep); libgomp1 is paddlepaddle's
+# OpenMP runtime — without it `import paddle` fails immediately with
+# "libgomp.so.1: cannot open shared object file"; pango/cairo/gdk-pixbuf for
+# WeasyPrint.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
+    libgomp1 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
     libcairo2 \
