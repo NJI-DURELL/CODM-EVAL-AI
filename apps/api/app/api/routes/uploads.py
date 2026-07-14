@@ -99,9 +99,7 @@ def get_screenshot_status(
     if screenshot["ocr_status"] == OcrStatus.FAILED:
         return OcrReviewPayload(
             screenshot_id=screenshot_id,
-            placement=None,
-            team_kills=None,
-            players=[],
+            teams=[],
             needs_review=True,
             error_message=screenshot.get("error_message") or "Processing failed.",
         )
@@ -110,9 +108,7 @@ def get_screenshot_status(
         # Still uploading/OCR-ing — frontend should keep polling.
         return OcrReviewPayload(
             screenshot_id=screenshot_id,
-            placement=None,
-            team_kills=None,
-            players=[],
+            teams=[],
             needs_review=False,
         )
 
@@ -134,37 +130,46 @@ def confirm_screenshot(
     if screenshot is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Screenshot not found")
 
-    team = None
-    if payload.team_id is not None:
-        team = team_repo.get(payload.team_id)
-        if team is None or team.tournament_id != tournament_id:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, "Team not found in this tournament")
-    else:
-        if not payload.team_name or not payload.team_name.strip():
-            raise HTTPException(
-                status.HTTP_400_BAD_REQUEST, "Name the team before confirming a new one."
-            )
-        team = team_repo.create(tournament_id, TeamCreate(name=payload.team_name.strip()))
+    if not payload.teams:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "No teams to confirm.")
 
-    # No pre-registered roster to match against, so a name OCR couldn't (or
-    # organizer didn't) match to an existing player is a genuinely new
-    # player, created here rather than dropped from individual stats. Any
-    # near-duplicate from an OCR misread gets reconciled by the organizer
-    # later, same as team names.
-    resolved_players = []
-    for entry in payload.players:
-        if entry.player_id is None and (entry.matched_name or entry.ocr_name).strip():
-            new_player = player_repo.create(
-                team.id, PlayerCreate(name=(entry.matched_name or entry.ocr_name).strip())
-            )
-            entry = entry.model_copy(update={"player_id": new_player.id})
-        resolved_players.append(entry)
+    team_ids: list[UUID] = []
+    resolved_teams = []
+    for team_payload in payload.teams:
+        if team_payload.team_id is not None:
+            team = team_repo.get(team_payload.team_id)
+            if team is None or team.tournament_id != tournament_id:
+                raise HTTPException(
+                    status.HTTP_404_NOT_FOUND, "Team not found in this tournament"
+                )
+        else:
+            if not team_payload.team_name or not team_payload.team_name.strip():
+                raise HTTPException(
+                    status.HTTP_400_BAD_REQUEST, "Name the team before confirming a new one."
+                )
+            team = team_repo.create(tournament_id, TeamCreate(name=team_payload.team_name.strip()))
+
+        # No pre-registered roster to match against, so a name OCR couldn't
+        # (or organizer didn't) match to an existing player is a genuinely
+        # new player, created here rather than dropped from individual
+        # stats. Any near-duplicate from an OCR misread gets reconciled by
+        # the organizer later, same as team names.
+        resolved_players = []
+        for entry in team_payload.players:
+            if entry.player_id is None and (entry.matched_name or entry.ocr_name).strip():
+                new_player = player_repo.create(
+                    team.id, PlayerCreate(name=(entry.matched_name or entry.ocr_name).strip())
+                )
+                entry = entry.model_copy(update={"player_id": new_player.id})
+            resolved_players.append(entry)
+
+        team_ids.append(team.id)
+        resolved_teams.append(team_payload.model_copy(update={"players": resolved_players}))
 
     screenshot_repo.update_status(screenshot_id, OcrStatus.CALCULATING)
-    screenshot_repo.confirm_match_result(
+    screenshot_repo.confirm_match_results(
         screenshot_id=screenshot_id,
         match_id=match_id,
-        team_id=team.id,
-        placement=payload.placement,
-        players=resolved_players,
+        teams=resolved_teams,
+        team_ids=team_ids,
     )

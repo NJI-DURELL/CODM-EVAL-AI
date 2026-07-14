@@ -1,0 +1,428 @@
+[
+  {
+    "text": "RANK",
+    "confidence": 0.9969726204872131,
+    "x_center": 1039.0,
+    "y_center": 81.0
+  },
+  {
+    "text": "DETAILS",
+    "confidence": 0.9971494078636169,
+    "x_center": 1323.0,
+    "y_center": 81.0
+  },
+  {
+    "text": "561s",
+    "confidence": 0.9843174815177917,
+    "x_center": 2249.0,
+    "y_center": 141.0
+  },
+  {
+    "text": "1",
+    "confidence": 0.8671383261680603,
+    "x_center": 515.0,
+    "y_center": 179.5
+  },
+  {
+    "text": "2",
+    "confidence": 0.966460108757019,
+    "x_center": 1005.0,
+    "y_center": 185.5
+  },
+  {
+    "text": "3",
+    "confidence": 0.8918625116348267,
+    "x_center": 1486.5,
+    "y_center": 182.0
+  },
+  {
+    "text": "TEAM1",
+    "confidence": 0.9761592149734497,
+    "x_center": 863.0,
+    "y_center": 202.5
+  },
+  {
+    "text": "TEAM15",
+    "confidence": 0.9975540637969971,
+    "x_center": 1337.5,
+    "y_center": 200.0
+  },
+  {
+    "text": "TEAM18",
+    "confidence": 0.9958963990211487,
+    "x_center": 1816.5,
+    "y_center": 201.0
+  },
+  {
+    "text": "OG>KUSH",
+    "confidence": 0.8788135647773743,
+    "x_center": 559.0,
+    "y_center": 251.0
+  },
+  {
+    "text": "17",
+    "confidence": 0.9716704487800598,
+    "x_center": 846.0,
+    "y_center": 250.5
+  },
+  {
+    "text": "BPirate",
+    "confidence": 0.959589958190918,
+    "x_center": 1057.5,
+    "y_center": 248.25
+  },
+  {
+    "text": "DBCASHY",
+    "confidence": 0.9302451014518738,
+    "x_center": 1541.5,
+    "y_center": 249.5
+  },
+  {
+    "text": "4",
+    "confidence": 0.98895663022995,
+    "x_center": 1803.5,
+    "y_center": 250.5
+  },
+  {
+    "text": "OG>DAHMER",
+    "confidence": 0.9277327656745911,
+    "x_center": 582.0,
+    "y_center": 300.0
+  },
+  {
+    "text": "23",
+    "confidence": 0.9955905675888062,
+    "x_center": 847.0,
+    "y_center": 302.5
+  },
+  {
+    "text": "DBwoman-k",
+    "confidence": 0.9385746717453003,
+    "x_center": 1081.5,
+    "y_center": 300.0
+  },
+  {
+    "text": "9",
+    "confidence": 0.6296380758285522,
+    "x_center": 1325.0,
+    "y_center": 301.5
+  },
+  {
+    "text": "DBJONES",
+    "confidence": 0.9111666083335876,
+    "x_center": 1541.0,
+    "y_center": 300.0
+  },
+  {
+    "text": "1",
+    "confidence": 0.8705633282661438,
+    "x_center": 1802.5,
+    "y_center": 301.5
+  },
+  {
+    "text": "OG>ChambasTT",
+    "confidence": 0.952273428440094,
+    "x_center": 600.0,
+    "y_center": 353.5
+  },
+  {
+    "text": "18",
+    "confidence": 0.9064618349075317,
+    "x_center": 847.0,
+    "y_center": 353.0
+  },
+  {
+    "text": "DBCrush",
+    "confidence": 0.9367785453796387,
+    "x_center": 1058.5,
+    "y_center": 354.5
+  },
+  {
+    "text": "LADADDY",
+    "confidence": 0.9061617851257324,
+    "x_center": 1528.5,
+    "y_center": 353.0
+  },
+  {
+    "text": "1",
+    "confidence": 0.8181946873664856,
+    "x_center": 1802.5,
+    "y_center": 353.5
+  },
+  {
+    "text": "OG>DAMAGE",
+    "confidence": 0.9368336796760559,
+    "x_center": 582.5,
+    "y_center": 401.5
+  },
+  {
+    "text": "7",
+    "confidence": 0.9167993664741516,
+    "x_center": 841.0,
+    "y_center": 405.0
+  },
+  {
+    "text": "DBPHanToM",
+    "confidence": 0.9612305164337158,
+    "x_center": 1086.5,
+    "y_center": 402.5
+  },
+  {
+    "text": "19",
+    "confidence": 0.988235592842102,
+    "x_center": 1330.0,
+    "y_center": 404.0
+  },
+  {
+    "text": "DBstyle",
+    "confidence": 0.9571781754493713,
+    "x_center": 1518.5,
+    "y_center": 402.5
+  },
+  {
+    "text": "3",
+    "confidence": 0.9806888103485107,
+    "x_center": 1805.0,
+    "y_center": 403.5
+  },
+  {
+    "text": "17",
+    "confidence": 0.5306095480918884,
+    "x_center": 525.0,
+    "y_center": 487.0
+  },
+  {
+    "text": "TEAM14",
+    "confidence": 0.9980776309967041,
+    "x_center": 862.5,
+    "y_center": 489.25
+  },
+  {
+    "text": "tT",
+    "confidence": 0.6403681039810181,
+    "x_center": 1006.5,
+    "y_center": 489.5
+  },
+  {
+    "text": "TEAM8",
+    "confidence": 0.9551597833633423,
+    "x_center": 1350.0,
+    "y_center": 491.5
+  },
+  {
+    "text": "1T",
+    "confidence": 0.5600488781929016,
+    "x_center": 1483.5,
+    "y_center": 487.0
+  },
+  {
+    "text": "TEAM4",
+    "confidence": 0.9974857568740845,
+    "x_center": 1830.0,
+    "y_center": 491.5
+  },
+  {
+    "text": "DByRn2.0",
+    "confidence": 0.9336918592453003,
+    "x_center": 588.0,
+    "y_center": 537.5
+  },
+  {
+    "text": "1",
+    "confidence": 0.8927158713340759,
+    "x_center": 848.0,
+    "y_center": 539.0
+  },
+  {
+    "text": "Sng@slayyyy",
+    "confidence": 0.9452695250511169,
+    "x_center": 1068.0,
+    "y_center": 540.0
+  },
+  {
+    "text": "OG>UGOCRY",
+    "confidence": 0.9345001578330994,
+    "x_center": 1546.5,
+    "y_center": 537.5
+  },
+  {
+    "text": "3",
+    "confidence": 0.9748443961143494,
+    "x_center": 1810.0,
+    "y_center": 539.0
+  },
+  {
+    "text": "DBOz",
+    "confidence": 0.8200397491455078,
+    "x_center": 561.5,
+    "y_center": 588.0
+  },
+  {
+    "text": "2",
+    "confidence": 0.9065619111061096,
+    "x_center": 848.0,
+    "y_center": 590.5
+  },
+  {
+    "text": "Sng@paul_biya",
+    "confidence": 0.9364483952522278,
+    "x_center": 1081.5,
+    "y_center": 591.0
+  },
+  {
+    "text": "1",
+    "confidence": 0.7879716753959656,
+    "x_center": 1329.0,
+    "y_center": 589.5
+  },
+  {
+    "text": "DBprime",
+    "confidence": 0.9507046937942505,
+    "x_center": 1542.5,
+    "y_center": 589.5
+  },
+  {
+    "text": "1",
+    "confidence": 0.8413766026496887,
+    "x_center": 1809.0,
+    "y_center": 589.5
+  },
+  {
+    "text": "SngTyrant",
+    "confidence": 0.9875867366790771,
+    "x_center": 580.0,
+    "y_center": 642.5
+  },
+  {
+    "text": "1",
+    "confidence": 0.8662858605384827,
+    "x_center": 847.5,
+    "y_center": 641.5
+  },
+  {
+    "text": "SngNotNice",
+    "confidence": 0.9903894662857056,
+    "x_center": 1068.0,
+    "y_center": 641.0
+  },
+  {
+    "text": "2",
+    "confidence": 0.932863712310791,
+    "x_center": 1329.0,
+    "y_center": 641.5
+  },
+  {
+    "text": "SngBig-M-237",
+    "confidence": 0.9851327538490295,
+    "x_center": 1083.75,
+    "y_center": 690.5
+  },
+  {
+    "text": "6",
+    "confidence": 0.9335035085678101,
+    "x_center": 1329.0,
+    "y_center": 692.0
+  },
+  {
+    "text": "16",
+    "confidence": 0.9983310699462891,
+    "x_center": 522.0,
+    "y_center": 775.0
+  },
+  {
+    "text": "17",
+    "confidence": 0.9988077878952026,
+    "x_center": 1004.0,
+    "y_center": 775.0
+  },
+  {
+    "text": "18",
+    "confidence": 0.9986448287963867,
+    "x_center": 1486.0,
+    "y_center": 776.5
+  },
+  {
+    "text": "TEAM10",
+    "confidence": 0.9700161814689636,
+    "x_center": 860.0,
+    "y_center": 788.5
+  },
+  {
+    "text": "TEAM5",
+    "confidence": 0.9949199557304382,
+    "x_center": 1346.5,
+    "y_center": 787.0
+  },
+  {
+    "text": "TEAM17",
+    "confidence": 0.9979049563407898,
+    "x_center": 1821.0,
+    "y_center": 788.5
+  },
+  {
+    "text": "OG>MAMBA",
+    "confidence": 0.9174099564552307,
+    "x_center": 580.0,
+    "y_center": 834.0
+  },
+  {
+    "text": "OG>NOFACE",
+    "confidence": 0.8627342581748962,
+    "x_center": 1065.0,
+    "y_center": 836.5
+  },
+  {
+    "text": "1",
+    "confidence": 0.683834969997406,
+    "x_center": 1329.0,
+    "y_center": 836.5
+  },
+  {
+    "text": "DBBOOGIE",
+    "confidence": 0.9527097940444946,
+    "x_center": 1555.0,
+    "y_center": 836.5
+  },
+  {
+    "text": "G>JOHN~WICK",
+    "confidence": 0.9755092859268188,
+    "x_center": 1087.5,
+    "y_center": 885.75
+  },
+  {
+    "text": "8",
+    "confidence": 0.5675336122512817,
+    "x_center": 1330.0,
+    "y_center": 888.0
+  },
+  {
+    "text": "DBBADGIRL",
+    "confidence": 0.9219595789909363,
+    "x_center": 1561.0,
+    "y_center": 886.0
+  },
+  {
+    "text": "OG>RAMZY.",
+    "confidence": 0.9165351390838623,
+    "x_center": 1061.5,
+    "y_center": 940.0
+  },
+  {
+    "text": "6",
+    "confidence": 0.9304097890853882,
+    "x_center": 1330.0,
+    "y_center": 940.0
+  },
+  {
+    "text": "OG>LIL_NASTY",
+    "confidence": 0.9538379311561584,
+    "x_center": 1085.0,
+    "y_center": 991.0
+  },
+  {
+    "text": "6",
+    "confidence": 0.9281564950942993,
+    "x_center": 1330.0,
+    "y_center": 991.0
+  }
+]

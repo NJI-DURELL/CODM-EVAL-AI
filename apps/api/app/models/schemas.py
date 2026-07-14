@@ -59,14 +59,12 @@ class Match(MatchCreate):
 class ScreenshotUploadResult(BaseModel):
     id: UUID
     match_id: UUID
-    team_id: UUID | None
     ocr_status: OcrStatus
 
 
 class ScreenshotSummary(BaseModel):
     id: UUID
     match_id: UUID
-    team_id: UUID | None
     ocr_status: OcrStatus
     error_message: str | None = None
     created_at: datetime
@@ -80,23 +78,33 @@ class PlayerKillEntry(BaseModel):
     kills: int
 
 
-class OcrReviewPayload(BaseModel):
-    screenshot_id: UUID
+class OcrTeamResult(BaseModel):
+    ocr_label: str
     placement: int | None
-    team_kills: int | None
+    team_kills: int
     players: list[PlayerKillEntry]
     needs_review: bool
-    error_message: str | None = None
     suggested_team_id: UUID | None = None
     suggested_team_name: str | None = None
 
 
-class MatchResultConfirm(BaseModel):
+class OcrReviewPayload(BaseModel):
     screenshot_id: UUID
-    placement: int
-    players: list[PlayerKillEntry]
+    teams: list[OcrTeamResult]
+    needs_review: bool
+    error_message: str | None = None
+
+
+class TeamResultConfirm(BaseModel):
     team_id: UUID | None = None
     team_name: str | None = None
+    placement: int
+    players: list[PlayerKillEntry]
+
+
+class MatchResultConfirm(BaseModel):
+    screenshot_id: UUID
+    teams: list[TeamResultConfirm]
 
 
 class TeamLeaderboardRow(BaseModel):
