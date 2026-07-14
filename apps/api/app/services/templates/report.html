@@ -142,8 +142,11 @@
     margin-top: 2px;
   }
 
-  .charts { display: flex; gap: 10px; margin-top: 8px; }
-  .charts img { width: 50%; }
+  /* WeasyPrint collapses <img> to zero size inside a flex container with a
+     percentage width — inline-block is the reliable pattern here. */
+  .charts { width: 100%; margin-top: 8px; }
+  .charts img { width: 48%; display: inline-block; vertical-align: top; }
+  .charts img + img { margin-left: 4%; }
 
   .summary-grid {
     display: flex;
