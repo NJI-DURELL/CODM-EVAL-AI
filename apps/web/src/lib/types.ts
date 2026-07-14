@@ -42,14 +42,31 @@ export interface PlayerCreate {
   ign?: string | null;
 }
 
+export type MatchType = "placement" | "kills" | "both";
+
 export interface Match {
   id: string;
   tournament_id: string;
   match_number: number;
+  match_type: MatchType;
+  label: string | null;
 }
 
 export interface MatchCreate {
   match_number: number;
+  match_type: MatchType;
+  label?: string | null;
+}
+
+export interface MatchResultSummary {
+  team_id: string;
+  team_name: string;
+  placement: number;
+  team_kills: number;
+  placement_points: number;
+  kill_points: number;
+  total_points: number;
+  performance_review: string;
 }
 
 export interface ScreenshotUploadResult {

@@ -2,15 +2,18 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { PlusIcon, Loader2Icon, GamepadIcon, ArrowRightIcon } from "lucide-react";
 
 import { useCreateMatch, useMatches } from "@/lib/queries/matches";
+import type { MatchType } from "@/lib/types";
+import { MATCH_TYPE_LABELS, matchTypeBadgeLabel } from "@/lib/match-type";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -23,10 +26,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
 const schema = z.object({
   match_number: z.coerce.number().int().min(1, "Match number must be at least 1."),
+  match_type: z.enum(["placement", "kills", "both"]),
+  label: z.string().optional(),
 });
 type FormInput = z.input<typeof schema>;
 type FormOutput = z.output<typeof schema>;
@@ -38,12 +51,20 @@ function OpenMatchDialog({ tournamentId }: { tournamentId: string }) {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
-  } = useForm<FormInput, unknown, FormOutput>({ resolver: zodResolver(schema) });
+  } = useForm<FormInput, unknown, FormOutput>({
+    resolver: zodResolver(schema),
+    defaultValues: { match_type: "both" },
+  });
 
   async function onSubmit(values: FormOutput) {
     try {
-      const match = await createMatch.mutateAsync({ match_number: values.match_number });
+      const match = await createMatch.mutateAsync({
+        match_number: values.match_number,
+        match_type: values.match_type,
+        label: values.label || null,
+      });
       toast.success(`Match #${match.match_number} ready`);
       setOpen(false);
       reset();
@@ -63,7 +84,10 @@ function OpenMatchDialog({ tournamentId }: { tournamentId: string }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Open a match</DialogTitle>
-          <DialogDescription>Reopening an existing match number takes you right back to it.</DialogDescription>
+          <DialogDescription>
+            Reopening an existing match number takes you right back to it — scoring mode is set once,
+            the first time a match number is opened.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <FieldGroup>
@@ -77,6 +101,35 @@ function OpenMatchDialog({ tournamentId }: { tournamentId: string }) {
                 {...register("match_number")}
               />
               <FieldError errors={[errors.match_number]} />
+            </Field>
+            <Field data-invalid={!!errors.match_type}>
+              <FieldLabel htmlFor="match-type">Scoring mode</FieldLabel>
+              <Controller
+                control={control}
+                name="match_type"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
+                    <SelectTrigger id="match-type" className="w-full">
+                      <SelectValue placeholder="Select scoring mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {(Object.keys(MATCH_TYPE_LABELS) as MatchType[]).map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {MATCH_TYPE_LABELS[type]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FieldError errors={[errors.match_type]} />
+            </Field>
+            <Field data-invalid={!!errors.label}>
+              <FieldLabel htmlFor="match-label">Round name (optional)</FieldLabel>
+              <Input id="match-label" placeholder="e.g. Grand Finals" {...register("label")} />
+              <FieldError errors={[errors.label]} />
             </Field>
           </FieldGroup>
           <DialogFooter className="mt-4">
@@ -135,8 +188,18 @@ export default function MatchesPage({ params }: { params: Promise<{ tournamentId
                   <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <GamepadIcon className="size-4.5" />
                   </div>
-                  <div className="flex-1 font-heading text-sm font-semibold tracking-wide">
-                    Match {match.match_number}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-heading text-sm font-semibold tracking-wide">
+                        Match {match.match_number}
+                      </span>
+                      <Badge variant="secondary" className="text-[10px]">
+                        {matchTypeBadgeLabel(match.match_type)}
+                      </Badge>
+                    </div>
+                    {match.label && (
+                      <div className="truncate text-xs text-muted-foreground">{match.label}</div>
+                    )}
                   </div>
                   <ArrowRightIcon className="size-4 text-muted-foreground" />
                 </CardContent>

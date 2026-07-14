@@ -5,13 +5,16 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { ArrowLeftIcon, UploadIcon, Loader2Icon, ImageIcon } from "lucide-react";
 
-import { useMatch } from "@/lib/queries/matches";
+import { useMatch, useMatchResults } from "@/lib/queries/matches";
 import { useMatchScreenshots, useUploadScreenshot } from "@/lib/queries/screenshots";
+import { matchTypeBadgeLabel } from "@/lib/match-type";
 import { OcrStatusBadge } from "@/components/ocr-status-badge";
 import { ScreenshotReviewPanel } from "@/components/screenshot-review-panel";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
 export default function MatchDetailPage({
@@ -22,6 +25,7 @@ export default function MatchDetailPage({
   const { tournamentId, matchId } = use(params);
   const { data: match } = useMatch(tournamentId, matchId);
   const { data: screenshots, isLoading: screenshotsLoading } = useMatchScreenshots(tournamentId, matchId);
+  const { data: results } = useMatchResults(tournamentId, matchId);
   const uploadScreenshot = useUploadScreenshot(tournamentId, matchId);
 
   const [activeScreenshotId, setActiveScreenshotId] = useState<string | null>(null);
@@ -62,9 +66,17 @@ export default function MatchDetailPage({
         All matches
       </Link>
 
-      <h2 className="font-heading text-xl font-semibold tracking-wide">
-        {match ? `Match ${match.match_number}` : <Skeleton className="h-7 w-32" />}
-      </h2>
+      {match ? (
+        <div className="flex items-center gap-2">
+          <h2 className="font-heading text-xl font-semibold tracking-wide">
+            Match {match.match_number}
+          </h2>
+          <Badge variant="secondary">{matchTypeBadgeLabel(match.match_type)}</Badge>
+          {match.label && <span className="text-sm text-muted-foreground">{match.label}</span>}
+        </div>
+      ) : (
+        <Skeleton className="h-7 w-32" />
+      )}
 
       <Card>
         <CardHeader>
@@ -155,6 +167,48 @@ export default function MatchDetailPage({
           </CardContent>
         </Card>
       </div>
+
+      {results && results.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Results</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-1">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>#</TableHead>
+                  <TableHead>Team</TableHead>
+                  <TableHead className="text-right">Placement pts</TableHead>
+                  <TableHead className="text-right">Kill pts</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead>Performance</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[...results]
+                  .sort((a, b) => b.total_points - a.total_points)
+                  .map((row) => (
+                    <TableRow key={row.team_id}>
+                      <TableCell className="text-muted-foreground">#{row.placement}</TableCell>
+                      <TableCell className="font-medium">{row.team_name}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {row.placement_points}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{row.kill_points}</TableCell>
+                      <TableCell className="text-right font-medium tabular-nums">
+                        {row.total_points}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {row.performance_review}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

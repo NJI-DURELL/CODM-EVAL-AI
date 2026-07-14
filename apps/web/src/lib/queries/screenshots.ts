@@ -72,6 +72,9 @@ export function useConfirmScreenshot(tournamentId: string, matchId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: screenshotKeys.list(tournamentId, matchId) });
       queryClient.invalidateQueries({ queryKey: ["tournaments", tournamentId, "leaderboard"] });
+      queryClient.invalidateQueries({
+        queryKey: ["tournaments", tournamentId, "matches", matchId, "results"],
+      });
     },
   });
 }
