@@ -30,7 +30,9 @@ def run_ocr(image: Image.Image) -> list[OcrToken]:
 
     tokens: list[OcrToken] = []
     for line in result or []:
-        for box, (text, confidence) in line:
+        # PaddleOCR returns `[None]` (a page entry, not an empty result) for
+        # a page/region with no detected text, rather than `[]` — skip it.
+        for box, (text, confidence) in line or []:
             xs = [p[0] for p in box]
             ys = [p[1] for p in box]
             tokens.append(
