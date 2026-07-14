@@ -1,8 +1,11 @@
 from datetime import date, datetime
 from enum import StrEnum
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+MatchType = Literal["placement", "kills", "both"]
 
 
 class OcrStatus(StrEnum):
@@ -25,6 +28,10 @@ class Tournament(TournamentCreate):
     id: UUID
     organizer_id: UUID
     status: str = "active"
+    # Always populated by the repository (falls back to config defaults on
+    # create), unlike the optional fields on TournamentCreate's input side.
+    placement_points: dict[str, int]
+    kill_point_value: float
     created_at: datetime
 
 
@@ -49,6 +56,8 @@ class Player(PlayerCreate):
 
 class MatchCreate(BaseModel):
     match_number: int = Field(gt=0)
+    match_type: MatchType = "both"
+    label: str | None = None
 
 
 class Match(MatchCreate):
@@ -105,6 +114,17 @@ class TeamResultConfirm(BaseModel):
 class MatchResultConfirm(BaseModel):
     screenshot_id: UUID
     teams: list[TeamResultConfirm]
+
+
+class MatchResultSummary(BaseModel):
+    team_id: UUID
+    team_name: str
+    placement: int
+    team_kills: int
+    placement_points: float
+    kill_points: float
+    total_points: float
+    performance_review: str
 
 
 class TeamLeaderboardRow(BaseModel):

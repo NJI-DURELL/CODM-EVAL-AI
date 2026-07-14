@@ -22,9 +22,16 @@ class MatchRepository:
         )
         # maybe_single() returns None outright (not a response with
         # .data=None) when zero rows match.
+        # A re-opened existing match number keeps its original scoring mode —
+        # match_type/label are only written on first creation.
         if existing and existing.data:
             return Match(**existing.data)
-        row = {"tournament_id": str(tournament_id), "match_number": payload.match_number}
+        row = {
+            "tournament_id": str(tournament_id),
+            "match_number": payload.match_number,
+            "match_type": payload.match_type,
+            "label": payload.label,
+        }
         result = self.db.table(TABLE).insert(row).execute()
         return Match(**result.data[0])
 
@@ -41,3 +48,22 @@ class MatchRepository:
             .execute()
         )
         return [Match(**row) for row in result.data]
+
+    def list_confirmed_results(self, match_id: UUID) -> list[dict]:
+        result = (
+            self.db.table("match_results")
+            .select("team_id, placement, team_kills, teams(name)")
+            .eq("match_id", str(match_id))
+            .eq("confirmed", True)
+            .order("placement")
+            .execute()
+        )
+        return [
+            {
+                "team_id": row["team_id"],
+                "team_name": row["teams"]["name"],
+                "placement": row["placement"],
+                "team_kills": row["team_kills"],
+            }
+            for row in result.data
+        ]
